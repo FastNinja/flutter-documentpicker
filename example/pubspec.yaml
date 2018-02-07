@@ -1,6 +1,7 @@
 name: documentpicker_example
 description: Pick document for view/read/export only. 
 author: FastNinja <maslukov@gmail.com>
+homepage: https://github.com/FastNinja/flutter-documentpicker
 
 dependencies:
   flutter:
