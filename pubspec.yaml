@@ -1,8 +1,8 @@
 name: documentpicker
-description: A new flutter plugin project.
+description: Pick document for view/read/export only. 
 version: 0.0.1
-author:
-homepage:
+author: FastNinja <maslukov@gmail.com>
+homepage: https://github.com/FastNinja/flutter-documentpicker
 
 dependencies:
   flutter:
