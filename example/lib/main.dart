@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -11,11 +12,32 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _fileContent = '';
-
+  String _docUrl;
+  String _fileContent = "";
   @override
   initState() {
     super.initState();
+  }
+
+  Future<Null> _pickDocument() async {
+    File file = await Documentpicker.pickDocument();
+
+    debugPrint(file.path);
+    try {
+      // example how to read selected file content
+      List<int> contents = await file.readAsBytes();
+      setState(() {
+        _docUrl = file.path;
+        _fileContent = contents.take(20).join("");
+      });
+      debugPrint("Managed to read file content!");
+    } on FileSystemException catch (e) {
+      debugPrint(e.message);
+    }
+  }
+
+  Future<Null> _viewDocument() async {
+    await Documentpicker.viewDocument(_docUrl);
   }
 
   @override
@@ -26,25 +48,27 @@ class _MyAppState extends State<MyApp> {
               title: new Text('Plugin example app'),
             ),
             body: new Center(
-                child: new Column(children: <Widget>[
-              new RaisedButton(
-                  child: new Text("Pick a file"),
-                  onPressed: () async {
-                    File file = await Documentpicker.pickDocument();
-                    debugPrint(file.path);
-                    try {
-                      List<int> contents = await file.readAsBytes();
-
-                      setState(() {
-                        _fileContent = contents.take(20).join("");
-                      });
-                      debugPrint("Managed to read file content!");
-                    } on FileSystemException catch (e) {
-                      debugPrint(e.message);
-                      debugPrint(e.path);
-                    }
-                  }),
-              new Text(_fileContent)
-            ]))));
+                child: new Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                  new RaisedButton(
+                      child: new Text("Pick a file"), onPressed: _pickDocument),
+                  new Padding(
+                      child: new Divider(
+                        color: Colors.black,
+                        height: 1.0,
+                      ),
+                      padding: const EdgeInsets.all(16.0)),
+                  _docUrl != null ? new Text(_docUrl) : new Container(),
+                  new Padding(
+                      child: new Divider(
+                        color: Colors.black,
+                        height: 1.0,
+                      ),
+                      padding: const EdgeInsets.all(16.0)),
+                  new RaisedButton(
+                      child: new Text("View Selected"),
+                      onPressed: _docUrl == null ? null : _viewDocument),
+                ]))));
   }
 }

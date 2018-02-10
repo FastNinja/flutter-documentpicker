@@ -2,13 +2,14 @@
 
 #import "DocumentpickerPlugin.h"
 
-@interface DocumentpickerPlugin ()<UIDocumentPickerDelegate>
+@interface DocumentpickerPlugin ()<UIDocumentPickerDelegate,UIDocumentInteractionControllerDelegate>
 @end
 
 @implementation DocumentpickerPlugin{
     FlutterResult _result;
     UIViewController *_viewController;
     UIDocumentPickerViewController *_pickerController;
+    UIDocumentInteractionController *_interactionController;
 }
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
@@ -46,24 +47,32 @@
                                     details:nil]);
         _result = nil;
     }
-    
-  if ([@"pickDocument" isEqualToString:call.method]) {
+   
 
-//      documentPickerMenu.delegate = self;
-//      [_viewController presentViewController:documentPickerMenu animated:YES completion:nil];
-//      UIDocumentPickerViewController  *documentPickerCtrl = [[UIDocumentPickerViewController alloc]
-//                                                          initWithDocumentTypes:@[@"public.item"]
-//                                                          inMode:UIDocumentPickerModeImport];
+  if ([@"pickDocument" isEqualToString:call.method]) {
       
       _pickerController.modalPresentationStyle = UIModalPresentationCurrentContext;
       _pickerController.delegate = self;
       
-        _result = result;
+      _result = result;
       [_viewController presentViewController:_pickerController animated:YES completion:nil];
       
   }
-  else if ([@"getPlatformVersion" isEqualToString:call.method]) {
-    result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
+  else if ([@"viewDocument" isEqualToString:call.method]) {
+      
+      NSString *documentUrl = call.arguments[@"documentUrl"];
+      
+      NSLog(@"Starting to Open doc %@", documentUrl);
+      
+      NSURL *docUrl = [NSURL fileURLWithPath:documentUrl];
+      
+      _interactionController = [UIDocumentInteractionController interactionControllerWithURL: docUrl];
+      _interactionController.delegate = self;
+  
+        _result = result;
+      [_interactionController presentPreviewAnimated:YES];
+      
+       _result = result;
   } else {
     result(FlutterMethodNotImplemented);
   }
@@ -77,7 +86,29 @@ didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls{
     NSURL *url = [urls objectAtIndex:0];
     
     NSString *resultFilePath = [url path];
-    NSLog( @"result:%@",resultFilePath);
+    NSLog( @"Finished picking document:%@",resultFilePath);
     _result(resultFilePath);
 }
+
+// DocumentInteractionController delegate
+
+- (void)documentInteractionControllerDidEndPreview:(UIDocumentInteractionController *)controller {
+    _result(@"Finished");
+}
+
+- (UIViewController *)documentInteractionControllerViewControllerForPreview:(UIDocumentInteractionController *)controller {
+    NSLog(@"Finished");
+    return  _viewController;
+}
+
+- (void)documentInteractionController:(UIDocumentInteractionController *)controller willBeginSendingToApplication:(NSString *)application {
+    
+    NSLog(@"Starting to send this puppy to %@", application);
+}
+
+- (void)documentInteractionController:(UIDocumentInteractionController *)controller didEndSendingToApplication:(NSString *)application {
+    
+    NSLog(@"We're done sending the document.");
+}
+
 @end
