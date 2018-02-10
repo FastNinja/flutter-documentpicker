@@ -1,6 +1,6 @@
 name: documentpicker
 description: Pick document for view/read/export only. Preview documents
-version: 0.0.3
+version: 0.0.4
 author: FastNinja <maslukov@gmail.com>
 homepage: https://github.com/FastNinja/flutter-documentpicker
 

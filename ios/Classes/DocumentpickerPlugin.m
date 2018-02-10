@@ -72,14 +72,13 @@
       
       BOOL isOk = [_interactionController presentPreviewAnimated:YES];
       if(isOk){
-          
-        NSLog(@"Failed to Open doc %@", documentUrl);
-        result(@"Failed");
+          _result = result;
       }else{
-       _result = result;
+          NSLog(@"Failed to Open doc %@", documentUrl);
+          result(@"Failed");
       }
   } else {
-    result(FlutterMethodNotImplemented);
+      result(FlutterMethodNotImplemented);
   }
 }
 
