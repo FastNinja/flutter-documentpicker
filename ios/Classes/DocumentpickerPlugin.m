@@ -69,10 +69,15 @@
       _interactionController = [UIDocumentInteractionController interactionControllerWithURL: docUrl];
       _interactionController.delegate = self;
   
-        _result = result;
-      [_interactionController presentPreviewAnimated:YES];
       
+      BOOL isOk = [_interactionController presentPreviewAnimated:YES];
+      if(isOk){
+          
+        NSLog(@"Failed to Open doc %@", documentUrl);
+        result(@"Failed");
+      }else{
        _result = result;
+      }
   } else {
     result(FlutterMethodNotImplemented);
   }
