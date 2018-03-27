@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 class Documentpicker {
   static const MethodChannel _channel = const MethodChannel('documentpicker');
 
-  static Future<String> get platformVersion =>
+  static Future get platformVersion =>
       _channel.invokeMethod('getPlatformVersion');
 
   static Future<Null> viewDocument(String documentUrl) async {
@@ -15,12 +15,8 @@ class Documentpicker {
           documentUrl, 'docUrl can\'t be null or empty');
     }
 
-    await _channel.invokeMethod(
-      'viewDocument',
-      <String, dynamic>{
-        'documentUrl': documentUrl,
-      },
-    );
+    final Map<String, dynamic> args = <String, dynamic>{'url': documentUrl};
+    await _channel.invokeMethod('viewDocument', args);
   }
 
   static Future<File> pickDocument() async {
