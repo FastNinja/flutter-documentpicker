@@ -21,7 +21,7 @@ Ansdroid implementation is not completed yet
 ```dart
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:documentpicker/documentpicker.dart';
+import 'package:flutter_document_picker/flutter_document_picker.dart';
 
 void main() => runApp(new MyApp());
 
